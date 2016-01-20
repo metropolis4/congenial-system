@@ -1,3 +1,5 @@
+var $ = require('jquery');
+
 var CommentBox = React.createClass({
     getInitialState: function() {
         return {comments: []};
