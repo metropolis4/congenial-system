@@ -5,4 +5,4 @@ var commentSchema = new mongoose.Schema({
     comment: String,
 });
 
-module.exports = mongoose.model('Comment', commentSchema)
+module.exports = mongoose.model('Comment', commentSchema);
