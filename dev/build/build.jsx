@@ -60,9 +60,12 @@ var Login = React.createClass({
                         />
                     </div>
                 </div>
-                <i className="huge blue pointing right icon sign-in-button">
-                    <input type="submit"/>
-                </i>
+                <button className="ui blue basic button" type="submit">
+                    <h2>
+                        GO &nbsp;
+                        <i className="pointing right icon"></i>
+                    </h2>
+                </button>
             </form>
         </div>
     }

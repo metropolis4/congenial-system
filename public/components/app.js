@@ -61,8 +61,11 @@ var Login = React.createClass({displayName: "Login",
                         )
                     )
                 ), 
-                React.createElement("i", {className: "huge blue pointing right icon sign-in-button"}, 
-                    React.createElement("input", {type: "submit"})
+                React.createElement("button", {className: "ui blue basic button", type: "submit"}, 
+                    React.createElement("h2", null, 
+                        "GO  ", 
+                        React.createElement("i", {className: "pointing right icon"})
+                    )
                 )
             )
         )
