@@ -1,108 +1,77 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var $ = require('jquery');
 
-var CommentBox = React.createClass({displayName: "CommentBox",
-    getInitialState: function() {
-        return {comments: []};
-    },
-    handleCommentSubmit: function(comment) {
-        var comments = this.state.comments;
-        var newComments = comments.concat([comment]);
-        this.setState({comments: newComments});
-        $.ajax({
-            url: '/saveComment',
-            type: 'POST',
-            data: comment,
-            success: function(comments) {
-                this.setState({comments: comments});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.log("ERROR: ", arguments);
-            }.bind(this)
-        });
-    },
-    componentDidMount: function() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(comments) {
-                this.setState({comments: comments});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
+var Landing = React.createClass({displayName: "Landing",
     render: function() {
-        return (
-            React.createElement("div", {className: "comment-box"}, 
-                React.createElement("h2", null, "Comments Go Here:"), 
-                React.createElement(CommentList, {comments: this.state.comments}), 
-                React.createElement(CommentForm, {onCommentSubmit: this.handleCommentSubmit})
-            )
+        return React.createElement("div", {className: "ui inverted vertical masthead center aligned segment jumbo-tron"}, 
+            React.createElement("div", {className: "ui text container"}, 
+                React.createElement("h1", {className: "ui inverted header main-header"}, " congenial system ")
+            ), 
+            React.createElement(Login, null)
         )
     }
 });
 
-var CommentList = React.createClass({displayName: "CommentList",
-    render: function() {
-        var comments = this.props.comments.map(function(comment) {
-            return (
-                React.createElement(Comment, {author: comment.name}, 
-                    comment.comment
-                )
-            );
-        });
-        return (
-            React.createElement("div", {className: "comment-list"}, 
-                comments
-            )
-        );
-    }
-});
-
-var Comment = React.createClass({displayName: "Comment",
-    render: function() {
-        var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
-        return (
-            React.createElement("div", {className: "comment"}, 
-                React.createElement("h2", {className: "comment-author"}, 
-                    this.props.author
-                ), 
-                React.createElement("span", {dangerouslySetInnerHTML: {__html: rawMarkup}})
-            )
-        );
-    }
-});
-
-var CommentForm = React.createClass({displayName: "CommentForm",
-    handleSubmit: function(e) {
+var Login = React.createClass({displayName: "Login",
+    getInitialState: function() {
+        return {userName: '', password: ''};
+    },
+    handleUserNameChange: function(e) {
+        this.setState({userName: e.target.value})
+    },
+    handlePasswordChange: function(e) {
+        this.setState({password: e.target.value})
+    },
+    loginSubmit: function(e) {
         e.preventDefault();
-        var name = React.findDOMNode(this.refs.name).value.trim();
-        var comment = React.findDOMNode(this.refs.comment).value.trim();
-        if(!name || !comment) { return; }
-        this.props.onCommentSubmit({name: name, comment: comment});
-        React.findDOMNode(this.refs.name).value = '';
-        React.findDOMNode(this.refs.comment).value = '';
-        return;
+        var userName = this.state.userName.trim();
+        var password = this.state.password.trim();
+        if(!userName || !password) {
+            return;
+        }
+        $.ajax({
+            url: '/login',
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                userName: userName,
+                password: password
+            }
+        })
     },
     render: function() {
-        return (
-            React.createElement("div", {className: "comment-form"}, 
-                React.createElement("form", {onSubmit: this.handleSubmit}, 
-                    React.createElement("input", {type: "text", placeholder: "name...", ref: "name"}), 
-                    React.createElement("input", {type: "text", placeholder: "Say something...", ref: "comment"}), 
-                    React.createElement("input", {type: "submit", value: "Post"})
+        return React.createElement("div", {className: "ui container center aligned"}, 
+            React.createElement("form", {className: "ui form", onSubmit: this.loginSubmit}, 
+                React.createElement("div", {className: "fields"}, 
+                    React.createElement("div", {className: "two wide field"}), 
+                    React.createElement("div", {className: "six wide field"}, 
+                        React.createElement("input", {
+                            type: "text", 
+                            placeholder: "name...", 
+                            value: this.state.userName, 
+                            onChange: this.handleUserNameChange}
+                        )
+                    ), 
+                    React.createElement("div", {className: "six wide field"}, 
+                        React.createElement("input", {
+                            type: "password", 
+                            placeholder: "password...", 
+                            value: this.state.password, 
+                            onChange: this.handlePasswordChange}
+                        )
+                    )
+                ), 
+                React.createElement("i", {className: "huge blue pointing right icon sign-in-button"}, 
+                    React.createElement("input", {type: "submit"})
                 )
             )
-        );
+        )
     }
-});
+})
 
 React.render(
-    React.createElement(CommentBox, {url: "/comments"}),
-    document.getElementById('content')
+    React.createElement(Landing, null),
+    document.getElementById('landing')
 );
 
 

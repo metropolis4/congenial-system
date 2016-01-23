@@ -6,7 +6,7 @@ var gulp       = require('gulp'),
 
 gulp.task('jsx', function(){
     log("concatenating jsx components...")
-    gulp.src('dev/components/*.jsx')
+    gulp.src('dev/components/**/*.jsx')
         .pipe($.concat('build.jsx'))
         .pipe(gulp.dest('dev/build/'));
 });
@@ -20,8 +20,16 @@ gulp.task('js', ['jsx'], function(){
         .pipe(gulp.dest('public/components'));
 });
 
-gulp.watch('./dev/components/*.jsx', ['js']);
-gulp.task('default', ['jsx', 'js']);
+gulp.task('css', function() {
+    log("Compiling CSS...")
+    gulp.src('dev/components/**/*.css')
+        .pipe($.concat('main.css'))
+        .pipe(gulp.dest('public/styles'))
+});
+
+gulp.watch('./dev/components/**/*.jsx', ['js']);
+gulp.watch('./dev/components/**/*.css', ['css'])
+gulp.task('default', ['jsx', 'js', 'css']);
 
 function log(message) {
     $.util.log( $.util.colors.blue(message));
